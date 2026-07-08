@@ -1,0 +1,44 @@
+# CI: Validate SQL on pull requests
+# Co-authored with CoCo
+name: CI - Validate SQL
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+    paths:
+      - 'deploy/**'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  validate-sql:
+    name: Validate SQL Scripts
+    runs-on: ubuntu-latest
+    environment: prod
+
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
+      SNOWFLAKE_SCHEMA: CI_DEV
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Snowflake CLI
+        uses: snowflakedb/snowflake-actions@v3
+        with:
+          use-oidc: true
+
+      - name: Test connection
+        run: snow connection test -x
+
+      - name: Dry-run SQL scripts against dev schema
+        run: |
+          for file in deploy/*.sql; do
+            echo "--- Validating: $file ---"
+            snow sql -f "$file" -x --schema CI_DEV
+          done
