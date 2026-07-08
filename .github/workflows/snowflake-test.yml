@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Test Snowflake connection
-        uses: Snowflake-Labs/snowflake-action@v1
+        uses: Snowflake-labs/snowflake-action@v1
         with:
           account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           user: ${{ secrets.SNOWFLAKE_USER }}
