@@ -11,7 +11,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Tes Snowflake connection
+      - name: Te Snowflake connection
         uses: Snowflake-Labs/snowflake-action@v1
         with:
           account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
