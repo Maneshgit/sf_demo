@@ -1,2 +1,1 @@
 ALTER TABLE IF EXISTS raw.jaffle_shop.customers
-  ADD COLUMN IF NOT EXISTS email VARCHAR(256);
