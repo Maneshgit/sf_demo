@@ -21,6 +21,7 @@ jobs:
 
     env:
       SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: GITHUB_ACTIONS_SERVICE_USER
       SNOWFLAKE_DATABASE: ${{ vars.SNOWFLAKE_DATABASE }}
       SNOWFLAKE_SCHEMA: CI_DEV
 
@@ -42,3 +43,15 @@ jobs:
             echo "--- Validating: $file ---"
             snow sql -f "$file" -x --schema CI_DEV
           done
+      - name: Connect to Snowflake using OIDC
+        uses: snowflakedb/snowflake-actions@v3
+        with:
+          use-oidc: true
+          account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          user: GITHUB_ACTIONS_SERVICE_USER
+          role: ACCOUNTADMIN
+          warehouse: COMPUTE_WH
+          database: ${{ vars.SNOWFLAKE_DATABASE }}
+          schema: CI_DEV
+          sql: |
+            SELECT CURRENT_USER(), CURRENT_ROLE(), CURRENT_TIMESTAMP();
